@@ -1,6 +1,7 @@
 const Discord = require('discord.js'),
       client = new Discord.Client(),
-      moment = require("moment-timezone");
+      moment = require("moment-timezone"),
+      fetch = require('node-fetch');
 /*
     D0wzy - 2020
     Website: https://dowzy.fr/
@@ -30,7 +31,7 @@ class Main {
             "mode": "cors"
         });
     }
-    checkVanityURL(url) {
+    async checkVanityURL(url) {
         return await fetch(`https://discord.com/api/v8/guilds/${guild.id}/vanity-url`, {
             "credentials": "include",
             "headers": {
@@ -44,9 +45,9 @@ class Main {
         });
     }
 
-    startSnipe(url, guild) {
+    async startSnipe(url, guild) {
         this.sniperInterval = setInterval(async () => {
-            this.setVanityURL(url, guild);
+            await this.setVanityURL(url, guild);
         }, 1000);
     }
 
@@ -66,14 +67,15 @@ client.on('message', async (message) => {
 
     if (command === "start-snipe") {
         let url = args[0];
-        handler.startSnipe(url, message.guild);
+        
 
         if (!message.guild.features.includes('VANITY_URL')) {
-            return message.reply("Vous ne possedez pas l'options VANITY_URL");
+            return message.reply("Vous ne possédez pas l'options VANITY_URL");
         };
 
-        message.reply(`Je commence à snipe l'URL ${url} dés maintenant`);
+        message.reply(`Je commence à vérifier l'URL ${url} dès maintenant!`);
         console.log(`[INFO] Start sniping the url ${url} !`);
+        await handler.startSnipe(url, message.guild);
     };
 
     if (command === "stop-snipe") {
@@ -82,4 +84,4 @@ client.on('message', async (message) => {
     
 
 });
-client.login("Super secret token here");
+client.login("BOT TOKEN"); //Head to https://discord.com/developers/applications 
